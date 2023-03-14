@@ -1,4 +1,4 @@
-# UtApiError
+# UTApiError
 
 **TODO: Add description**
 

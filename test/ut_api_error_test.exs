@@ -1,8 +1,5 @@
-defmodule UtApiErrorTest do
-  use ExUnit.Case
-  doctest UtApiError
+defmodule UTApiErrorTest do
+  use ExUnit.Case, async: true
 
-  test "greets the world" do
-    assert UtApiError.hello() == :world
-  end
+  doctest UTApiError
 end
