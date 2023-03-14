@@ -4,6 +4,7 @@ defmodule UTApiError do
   """
 
   alias UTApiError.Error
+  alias UTApiError.DetailsTransformable
 
   @doc """
   构造 error 结构体
@@ -16,7 +17,8 @@ defmodule UTApiError do
       %UTApiError.Error{
         code: :unauthenticated,
         status: 401,
-        message: "The request does not have valid authentication credentials for the operation."
+        message: "The request does not have valid authentication credentials for the operation.",
+        details: []
       }
 
   自定义 message 和 details ：
@@ -34,8 +36,24 @@ defmodule UTApiError do
       }
 
   """
-  @spec build(code :: atom(), opts :: keyword()) :: UTApiError.Error.t()
+  @spec build(code :: atom(), opts :: keyword()) :: Error.t()
   def build(code, opts \\ []) do
     Error.new(code, opts)
+  end
+
+  @doc """
+  把结构体或结构体列表转换成 detail 的列表
+
+  结构体需要实现 `UTApiError.DetailsTransformable` 协议。
+  """
+  @spec transform_details(data :: struct() | list()) :: [Error.detail()]
+  def transform_details(data) when is_list(data) do
+    Enum.flat_map(data, fn item ->
+      DetailsTransformable.transform(item)
+    end)
+  end
+
+  def transform_details(data) when is_struct(data) do
+    DetailsTransformable.transform(data)
   end
 end
