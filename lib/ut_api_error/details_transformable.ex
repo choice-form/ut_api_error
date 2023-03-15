@@ -13,7 +13,12 @@ if Code.ensure_loaded?(Ecto.Changeset) do
     alias UTApiError.Details.FieldViolation
 
     def transform(chset) do
-      traverse_errors = &Ecto.Changeset.traverse_errors/2
+      traverse_errors =
+        if function_exported?(PolymorphicEmbed, :traverse_errors, 2) do
+          &PolymorphicEmbed.traverse_errors/2
+        else
+          &Ecto.Changeset.traverse_errors/2
+        end
 
       traverse_errors.(chset, fn {msg, opts} ->
         translate_error(msg, opts)

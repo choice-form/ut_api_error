@@ -105,6 +105,76 @@ defmodule UTApiError.DetailsTransformable.EctoTest do
     end
   end
 
+  defmodule DemoEmail do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    embedded_schema do
+      field :address, :string
+      field :confirmed, :boolean
+    end
+
+    def changeset(email, params) do
+      email
+      |> cast(params, [:address, :confirmed])
+      |> validate_required(:address)
+      |> validate_length(:address, min: 4)
+    end
+  end
+
+  defmodule DemoSMS do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    @primary_key false
+    embedded_schema do
+      field :number, :string
+    end
+
+    def changeset(sms, params) do
+      sms
+      |> cast(params, [:number])
+      |> validate_required(:number)
+    end
+  end
+
+  defmodule DemoReminder do
+    use Ecto.Schema
+    import Ecto.Changeset
+    import PolymorphicEmbed
+
+    embedded_schema do
+      field :text, :string
+
+      polymorphic_embeds_one :channel,
+        types: [
+          sms: DemoSMS,
+          email: DemoEmail
+        ],
+        type_field: :type,
+        on_type_not_found: :raise,
+        on_replace: :update
+
+      polymorphic_embeds_many :channels,
+        types: [
+          sms: DemoSMS,
+          email: DemoEmail
+        ],
+        type_field: :type,
+        on_type_not_found: :raise,
+        on_replace: :delete
+    end
+
+    def changeset(params) do
+      %__MODULE__{}
+      |> cast(params, [:text])
+      |> validate_required(:text)
+      |> cast_polymorphic_embed(:channel)
+      |> cast_polymorphic_embed(:channels)
+    end
+  end
+
   test "invalid params for top-level schema errors" do
     chset =
       DemoOrder.changeset(%{
@@ -279,6 +349,69 @@ defmodule UTApiError.DetailsTransformable.EctoTest do
              },
              %FieldViolation{
                path: [:items, 0, :tags, 1, :name],
+               description: "can't be blank"
+             }
+           ]
+  end
+
+  test "invalid params for polymorphic embed (one)" do
+    chset =
+      DemoReminder.changeset(%{
+        text: "",
+        channel: %{
+          type: "sms",
+          number: ""
+        }
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:channel, :number],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:text],
+               description: "can't be blank"
+             }
+           ]
+  end
+
+  test "invalid params for polymorphic embed (many)" do
+    chset =
+      DemoReminder.changeset(%{
+        text: "",
+        channels: [
+          %{
+            type: "email",
+            address: "",
+            confirmed: :wrong
+          },
+          %{
+            type: "sms",
+            number: ""
+          }
+        ]
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:channels, 0, :address],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:channels, 0, :confirmed],
+               description: "is invalid"
+             },
+             %FieldViolation{
+               path: [:channels, 1, :number],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:text],
                description: "can't be blank"
              }
            ]
