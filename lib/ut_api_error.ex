@@ -9,6 +9,11 @@ defmodule UTApiError do
   @doc """
   构造 error 结构体
 
+  opts 可选参数：
+
+  * `message` - 自定义的错误信息，给调用者 debug 用
+  * `details` - 细节的结构化数据，需要保证它们可以被 `Jason.encode`
+
   ## Examples
 
   仅传 code ：
