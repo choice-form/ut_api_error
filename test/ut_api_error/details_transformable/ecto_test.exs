@@ -58,11 +58,13 @@ defmodule UTApiError.DetailsTransformable.EctoTest do
     embedded_schema do
       field :name, :string
       field :price, :integer
+      embeds_many :tags, DemoTag
     end
 
     def changeset(line_item, params) do
       line_item
       |> cast(params, [:name, :price])
+      |> cast_embed(:tags)
       |> validate_required([:name, :price])
       |> validate_number(:price, greater_than: 0)
     end
@@ -206,6 +208,78 @@ defmodule UTApiError.DetailsTransformable.EctoTest do
              %FieldViolation{
                path: [:items, 2, :price],
                description: "must be greater than 0"
+             }
+           ]
+  end
+
+  test "invalid params for embed (one) errors" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        detail: %{
+          description: ""
+        }
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:detail, :description],
+               description: "can't be blank"
+             }
+           ]
+  end
+
+  test "invalid params for embed (many) errors" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        tags: [
+          %{name: "Tag 1"},
+          %{name: ""}
+        ]
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:tags, 1, :name],
+               description: "can't be blank"
+             }
+           ]
+  end
+
+  test "invalid params for embed (many) nested in relationship" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        items: [
+          %{
+            name: "",
+            price: 1,
+            tags: [
+              %{name: "Tag 1"},
+              %{name: ""}
+            ]
+          }
+        ]
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:items, 0, :name],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:items, 0, :tags, 1, :name],
+               description: "can't be blank"
              }
            ]
   end
