@@ -21,9 +21,10 @@ defmodule UtApiError.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:jason, "~> 1.3"},
       {:ecto, "~> 3.8", optional: true},
       {:polymorphic_embed, "~> 3.0", optional: true},
-      {:open_api_spex, "~> 3.13.0", optional: true}
+      {:open_api_spex, "~> 3.12", optional: true}
     ]
   end
 end

@@ -11,4 +11,13 @@ defmodule UTApiError.Details.FieldViolation do
         }
 
   @type path_key :: String.t() | integer()
+
+  defimpl Jason.Encoder do
+    def encode(data, opts) do
+      data
+      |> Map.take([:path, :description])
+      |> Map.put(:"$type", "FieldViolation")
+      |> Jason.Encode.map(opts)
+    end
+  end
 end

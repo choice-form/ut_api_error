@@ -35,10 +35,24 @@ defmodule UTApiError.Error do
           code: atom(),
           status: pos_integer(),
           message: String.t(),
-          details: [detail()] | nil
+          details: [detail()]
         }
 
   @type detail :: struct() | map()
+
+  defimpl Jason.Encoder do
+    def encode(error, opts) do
+      Jason.Encode.map(
+        %{
+          code: error.code |> to_string() |> String.upcase(),
+          status: error.status,
+          message: error.message,
+          details: error.details
+        },
+        opts
+      )
+    end
+  end
 
   @doc """
   初始化 Error
