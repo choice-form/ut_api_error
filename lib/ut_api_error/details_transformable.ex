@@ -66,3 +66,18 @@ if Code.ensure_loaded?(Ecto.Changeset) do
     end
   end
 end
+
+if Code.ensure_loaded?(OpenApiSpex) do
+  defimpl UTApiError.DetailsTransformable, for: OpenApiSpex.Cast.Error do
+    alias UTApiError.Details.FieldViolation
+
+    def transform(error) do
+      [
+        %FieldViolation{
+          path: error.path,
+          description: to_string(error)
+        }
+      ]
+    end
+  end
+end
