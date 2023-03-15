@@ -133,6 +133,83 @@ defmodule UTApiError.DetailsTransformable.EctoTest do
            ]
   end
 
+  test "invalid params for relationship field errors" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        items: [
+          %{name: "item 1", price: 1},
+          %{name: "item 2", price: 1},
+          %{name: "item 3", price: 1}
+        ]
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:items],
+               description: "should have at most 2 item(s)"
+             }
+           ]
+  end
+
+  test "invalid params for relationship (one) errors" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        buyer: %{
+          name: "",
+          age: 16
+        }
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:buyer, :age],
+               description: "must be greater than 18"
+             },
+             %FieldViolation{
+               path: [:buyer, :name],
+               description: "can't be blank"
+             }
+           ]
+  end
+
+  test "invalid params for relationship (many) errors" do
+    chset =
+      DemoOrder.changeset(%{
+        name: "order 1",
+        price: 1,
+        items: [
+          %{name: "Item 1", price: 1},
+          %{name: "", price: ""},
+          %{name: "item 3", price: -1}
+        ]
+      })
+
+    details = DetailsTransformable.transform(chset)
+
+    assert sort_field_violations(details) == [
+             %FieldViolation{
+               path: [:items, 1, :name],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:items, 1, :price],
+               description: "can't be blank"
+             },
+             %FieldViolation{
+               path: [:items, 2, :price],
+               description: "must be greater than 0"
+             }
+           ]
+  end
+
   defp sort_field_violations(details) do
     Enum.sort_by(details, &{&1.path, &1.description})
   end
