@@ -12,8 +12,6 @@ Choiceform 的 REST API 处理错误的标准库。
 mix test
 ```
 
-## 
-
 ## 其他项目集成
 
 下面以 Phoenix 项目举例子，但 `ut_api_error` 并不依赖任何 web 框架，集成的整体思路也是一致的。
@@ -87,11 +85,11 @@ defmodule YourAppWeb.FallbackController do
 end
 ```
 
-对应的 `ErrorJSON` ：
+对应的 `ErrorView` ：
 
 ```elixir
 defmodule YourAppWeb.ErrorView do
-  def render("error.json", %{request_id: request_id, error: api_error}) do
+  def render("api_error.json", %{request_id: request_id, error: api_error}) do
     # api_error 是 UTApiError.Error 结构体
     # 因为实现了 Jason.Encoder 协议，可以被自动转换成 JSON
     %{request_id: request_id, error: api_error}
@@ -99,7 +97,19 @@ defmodule YourAppWeb.ErrorView do
 end
 ```
 
-### 业务逻辑错误错误
+或对应的 `ErrorJSON` (in Phoenix 1.7) ：
+
+```elixir
+defmodule YourAppWeb.ErrorJSON do
+  def api_error(%{request_id: request_id, error: api_error}) do
+    # api_error 是 UTApiError.Error 结构体
+    # 因为实现了 Jason.Encoder 协议，可以被自动转换成 JSON
+    %{request_id: request_id, error: api_error}
+  end
+end
+```
+
+### 业务逻辑错误处理
 
 这些错误一般是每个应用专有的，错误需求包括但不限于：
 
