@@ -33,6 +33,9 @@
 ### Fixed
 ### Security
 ### Migration
+### Chore
+
+- 升级 `PolymorphicEmbed` 到 5.0
 
 ## [v0.1.0] - 2023-03-15
 
