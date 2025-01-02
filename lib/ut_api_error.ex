@@ -1,10 +1,10 @@
-defmodule UTApiError do
+defmodule UtApiError do
   @moduledoc """
   入口模块
   """
 
-  alias UTApiError.Error
-  alias UTApiError.DetailsTransformable
+  alias UtApiError.Error
+  alias UtApiError.DetailsTransformable
 
   @doc """
   构造 error 结构体
@@ -18,8 +18,8 @@ defmodule UTApiError do
 
   仅传 code ：
 
-      iex> UTApiError.build(:unauthenticated)
-      %UTApiError.Error{
+      iex> UtApiError.build(:unauthenticated)
+      %UtApiError.Error{
         code: :unauthenticated,
         status: 401,
         message: "The request does not have valid authentication credentials for the operation.",
@@ -28,12 +28,12 @@ defmodule UTApiError do
 
   自定义 message 和 details ：
 
-      iex> UTApiError.build(
+      iex> UtApiError.build(
       ...>   :failed_precondition,
       ...>   message: "The quota is full",
       ...>   details: [%{reason: "quota_full"}]
       ...> )
-      %UTApiError.Error{
+      %UtApiError.Error{
         code: :failed_precondition,
         status: 400,
         message: "The quota is full",
@@ -49,10 +49,10 @@ defmodule UTApiError do
   @doc """
   把结构体或结构体列表转换成 detail 的列表
 
-  结构体需要实现 `UTApiError.DetailsTransformable` 协议。本库自带支持以下结构体：
+  结构体需要实现 `UtApiError.DetailsTransformable` 协议。本库自带支持以下结构体：
 
-  * `Ecto.Changeset` - 转换成多个 `UTApiError.Details.FieldViolation` 结构体
-  * `OpenApiSpex.Cast.Error` - 转换成一个 `UTApiError.Details.FieldViolation` 结构体
+  * `Ecto.Changeset` - 转换成多个 `UtApiError.Details.FieldViolation` 结构体
+  * `OpenApiSpex.Cast.Error` - 转换成一个 `UtApiError.Details.FieldViolation` 结构体
 
   ## Examples
 
@@ -74,17 +74,17 @@ defmodule UTApiError do
         length: 1,
         meta: %{}
       }
-      iex(2)> UTApiError.build(
+      iex(2)> UtApiError.build(
       ...(2)>   :invalid_argument,
       ...(2)>   message: "custom message",
-      ...(2)>   details: UTApiError.transform_details(error)
+      ...(2)>   details: UtApiError.transform_details(error)
       ...(2)> )
-      %UTApiError.Error{
+      %UtApiError.Error{
         code: :invalid_argument,
         status: 400,
         message: "custom message",
         details: [
-          %UTApiError.Details.FieldViolation{
+          %UtApiError.Details.FieldViolation{
             path: ["a"],
             description: "Array length 0 is smaller than minItems: 1"
           }

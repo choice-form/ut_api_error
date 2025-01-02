@@ -1,4 +1,4 @@
-defmodule UTApiError.Error do
+defmodule UtApiError.Error do
   @data [
           {:invalid_argument, 400, "The client specified an invalid argument."},
           {:failed_precondition, 400,

@@ -1,4 +1,4 @@
-defmodule UTApiError.Details.ErrorInfo do
+defmodule UtApiError.Details.ErrorInfo do
   @moduledoc """
   错误原因的结构体
 

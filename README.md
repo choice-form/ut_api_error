@@ -1,4 +1,4 @@
-# UTApiError
+# UtApiError
 
 Choiceform 的 REST API 处理错误的标准库。
 
@@ -30,9 +30,9 @@ def deps do
 end
 ```
 
-### UTApiError 基础用法
+### UtApiError 基础用法
 
-具体看 `UTApiError` 模块文档。你基本只需要 `build` 和 `transform_details` 。
+具体看 `UtApiError` 模块文档。你基本只需要 `build` 和 `transform_details` 。
 
 ### 通用 API 错误的处理
 
@@ -47,17 +47,17 @@ Phoenix 项目应该在 controller action 层面返回统一的 `{:error, struct
 
 ```elixir
 defmodule YourAppWeb.FallbackController do
-  # 统一处理 UTApiError.Error
-  def call(conn, {:error, %UTApiError.Error{} = error}) do
+  # 统一处理 UtApiError.Error
+  def call(conn, {:error, %UtApiError.Error{} = error}) do
     render_error(conn, error)
   end
 
   # 统一处理 Ecto.Changeset
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
-    # 构建 UTApiError.Error 结构体，并把 changeset 转换成 details 结构体列表
+    # 构建 UtApiError.Error 结构体，并把 changeset 转换成 details 结构体列表
     error =
-      UTApiError.build(:invalid_argument,
-        details: UTApiError.transform_details(changeset)
+      UtApiError.build(:invalid_argument,
+        details: UtApiError.transform_details(changeset)
       )
 
     render_error(conn, error)
@@ -90,7 +90,7 @@ end
 ```elixir
 defmodule YourAppWeb.ErrorView do
   def render("api_error.json", %{request_id: request_id, error: api_error}) do
-    # api_error 是 UTApiError.Error 结构体
+    # api_error 是 UtApiError.Error 结构体
     # 因为实现了 Jason.Encoder 协议，可以被自动转换成 JSON
     %{request_id: request_id, error: api_error}
   end
@@ -102,7 +102,7 @@ end
 ```elixir
 defmodule YourAppWeb.ErrorJSON do
   def api_error(%{request_id: request_id, error: api_error}) do
-    # api_error 是 UTApiError.Error 结构体
+    # api_error 是 UtApiError.Error 结构体
     # 因为实现了 Jason.Encoder 协议，可以被自动转换成 JSON
     %{request_id: request_id, error: api_error}
   end
@@ -116,7 +116,7 @@ end
 - 定义业务错误代码
 - 定义额外的结构化数据，方便调用者处理
 
-这需要在 controller action 里单独构建 `UTApiError.Error` 。大多数情况下它们应该使用 code `:failed_precondition` ，并把细节数据放到 details 中。
+这需要在 controller action 里单独构建 `UtApiError.Error` 。大多数情况下它们应该使用 code `:failed_precondition` ，并把细节数据放到 details 中。
 
 
 ```elixir
@@ -126,15 +126,15 @@ defmodule YourAppWeb.WorkflowController do
       render_ok()
     else
       {:error, {:publish_error, _reason}} ->
-        # 把 context 中的错误转换成 UTApiError.Error 结构体
+        # 把 context 中的错误转换成 UtApiError.Error 结构体
         # 业务错误的 code 和 details 需要自行决定
-        api_error = UTApiError.build(
+        api_error = UtApiError.build(
           :failed_precondition,
           # API 规范对 details 的定义是 array<object>
           details: [
             # detail 可以是 map 或结构体，结构体需要实现 Jason.Encoder 协议
             # ErrorInfo 是通用的带业务错误代码 (reason) 的数据结构
-            %UTApiError.Details.ErrorInfo{
+            %UtApiError.Details.ErrorInfo{
               reason: "business_code"
             }
           ]

@@ -1,5 +1,5 @@
-defprotocol UTApiError.DetailsTransformable do
-  alias UTApiError.Error
+defprotocol UtApiError.DetailsTransformable do
+  alias UtApiError.Error
 
   @doc """
   把结构体转换成 detail 列表
@@ -9,8 +9,8 @@ defprotocol UTApiError.DetailsTransformable do
 end
 
 if Code.ensure_loaded?(Ecto.Changeset) do
-  defimpl UTApiError.DetailsTransformable, for: Ecto.Changeset do
-    alias UTApiError.Details.FieldViolation
+  defimpl UtApiError.DetailsTransformable, for: Ecto.Changeset do
+    alias UtApiError.Details.FieldViolation
 
     def transform(chset) do
       traverse_errors =
@@ -68,8 +68,8 @@ if Code.ensure_loaded?(Ecto.Changeset) do
 end
 
 if Code.ensure_loaded?(OpenApiSpex) do
-  defimpl UTApiError.DetailsTransformable, for: OpenApiSpex.Cast.Error do
-    alias UTApiError.Details.FieldViolation
+  defimpl UtApiError.DetailsTransformable, for: OpenApiSpex.Cast.Error do
+    alias UtApiError.Details.FieldViolation
 
     def transform(error) do
       [

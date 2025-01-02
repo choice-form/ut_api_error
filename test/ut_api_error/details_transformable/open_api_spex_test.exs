@@ -1,8 +1,8 @@
-defmodule UTApiError.DetailsTransformable.OpenApiSpexTest do
+defmodule UtApiError.DetailsTransformable.OpenApiSpexTest do
   use ExUnit.Case, async: true
 
-  alias UTApiError.DetailsTransformable
-  alias UTApiError.Details.FieldViolation
+  alias UtApiError.DetailsTransformable
+  alias UtApiError.Details.FieldViolation
 
   test "transform error" do
     error = %OpenApiSpex.Cast.Error{

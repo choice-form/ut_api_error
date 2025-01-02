@@ -1,4 +1,4 @@
-defmodule UTApiError.Details.FieldViolation do
+defmodule UtApiError.Details.FieldViolation do
   @moduledoc """
   请求参数错误的结构体，标识哪一个字段出错
   """

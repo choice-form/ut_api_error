@@ -1,5 +1,5 @@
-defmodule UTApiErrorTest do
+defmodule UtApiErrorTest do
   use ExUnit.Case, async: true
 
-  doctest UTApiError
+  doctest UtApiError
 end

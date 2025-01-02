@@ -1,8 +1,8 @@
-defmodule UTApiError.DetailsTransformable.EctoTest do
+defmodule UtApiError.DetailsTransformable.EctoTest do
   use ExUnit.Case, async: true
 
-  alias UTApiError.DetailsTransformable
-  alias UTApiError.Details.FieldViolation
+  alias UtApiError.DetailsTransformable
+  alias UtApiError.Details.FieldViolation
 
   defmodule DemoOrderDetail do
     use Ecto.Schema
