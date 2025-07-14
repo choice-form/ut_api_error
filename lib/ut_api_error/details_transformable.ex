@@ -14,7 +14,8 @@ if Code.ensure_loaded?(Ecto.Changeset) do
 
     def transform(chset) do
       traverse_errors =
-        if function_exported?(PolymorphicEmbed, :traverse_errors, 2) do
+        if Code.ensure_loaded?(PolymorphicEmbed) and
+             function_exported?(PolymorphicEmbed, :traverse_errors, 2) do
           &PolymorphicEmbed.traverse_errors/2
         else
           &Ecto.Changeset.traverse_errors/2
