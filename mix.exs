@@ -23,7 +23,7 @@ defmodule UtApiError.MixProject do
     [
       {:jason, "~> 1.3"},
       {:ecto, "~> 3.9", optional: true},
-      {:polymorphic_embed, "~> 3.0", optional: true},
+      {:polymorphic_embed, "~> 5.0", optional: true},
       {:open_api_spex, "~> 3.12", optional: true}
     ]
   end
