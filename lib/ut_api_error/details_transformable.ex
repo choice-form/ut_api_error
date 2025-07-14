@@ -12,15 +12,10 @@ if Code.ensure_loaded?(Ecto.Changeset) do
   defimpl UtApiError.DetailsTransformable, for: Ecto.Changeset do
     alias UtApiError.Details.FieldViolation
 
-    def transform(chset) do
-      traverse_errors =
-        if function_exported?(PolymorphicEmbed, :traverse_errors, 2) do
-          &PolymorphicEmbed.traverse_errors/2
-        else
-          &Ecto.Changeset.traverse_errors/2
-        end
+    @traverse_errors_fn Application.compile_env!(:ut_api_error, :ecto_traverse_errors)
 
-      traverse_errors.(chset, fn {msg, opts} ->
+    def transform(chset) do
+      @traverse_errors_fn.(chset, fn {msg, opts} ->
         translate_error(msg, opts)
       end)
       |> build_details([], [])
