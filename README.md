@@ -30,6 +30,16 @@ def deps do
 end
 ```
 
+如果你使用 `Ecto` 或者 `PolymorphicEmbed` ，需要配置错误处理方法：
+
+```elixir
+# only ecto
+config :ut_api_error, ecto_traverse_errors: &Ecto.Changeset.traverse_errors/2
+
+# with polymorphic_embed
+config :ut_api_error, ecto_traverse_errors: &PolymorphicEmbed.traverse_errors/2
+```
+
 ### UtApiError 基础用法
 
 具体看 `UtApiError` 模块文档。你基本只需要 `build` 和 `transform_details` 。
