@@ -1,10 +1,12 @@
 defmodule UtApiError.MixProject do
   use Mix.Project
 
+  @version "0.3.0"
+
   def project do
     [
       app: :ut_api_error,
-      version: "0.2.0",
+      version: @version,
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps()
