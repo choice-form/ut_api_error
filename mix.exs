@@ -9,7 +9,14 @@ defmodule UtApiError.MixProject do
       version: @version,
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [check: :test]
     ]
   end
 
@@ -27,6 +34,16 @@ defmodule UtApiError.MixProject do
       {:ecto, "~> 3.9", optional: true},
       {:polymorphic_embed, "~> 5.0", optional: true},
       {:open_api_spex, "~> 3.12", optional: true}
+    ]
+  end
+
+  defp aliases do
+    [
+      check: [
+        "format --check-formatted",
+        "compile --warnings-as-errors",
+        "test"
+      ]
     ]
   end
 end

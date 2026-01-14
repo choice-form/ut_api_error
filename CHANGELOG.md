@@ -27,6 +27,9 @@
 ## [Unreleased]
 
 ### Added
+
+- 为错误结构体增加 JSON 编码支持，并提供可配置的 `ecto_traverse_errors` 和 `mix check` alias 及相关测试
+
 ### Changed
 ### Deprecated
 ### Removed

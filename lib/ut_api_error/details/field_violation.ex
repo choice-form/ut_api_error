@@ -20,4 +20,13 @@ defmodule UtApiError.Details.FieldViolation do
       |> Jason.Encode.map(opts)
     end
   end
+
+  defimpl JSON.Encoder do
+    def encode(data, encoder) do
+      data
+      |> Map.take([:path, :description])
+      |> Map.put(:"$type", "FieldViolation")
+      |> JSON.encode_to_iodata!(encoder)
+    end
+  end
 end

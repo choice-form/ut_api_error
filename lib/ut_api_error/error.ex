@@ -54,6 +54,18 @@ defmodule UtApiError.Error do
     end
   end
 
+  defimpl JSON.Encoder do
+    def encode(error, encoder) do
+      %{
+        code: error.code |> to_string() |> String.upcase(),
+        status: error.status,
+        message: error.message,
+        details: error.details
+      }
+      |> JSON.encode_to_iodata!(encoder)
+    end
+  end
+
   @doc """
   初始化 Error
   """
