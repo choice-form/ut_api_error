@@ -26,4 +26,16 @@ defmodule UtApiError.Details.ErrorInfo do
       |> Jason.Encode.map(opts)
     end
   end
+
+  defimpl JSON.Encoder do
+    def encode(data, encoder) do
+      %{
+        "$type": "ErrorInfo",
+        reason: data.reason |> to_string() |> String.upcase(),
+        domain: data.domain,
+        metadata: data.metadata
+      }
+      |> JSON.encode_to_iodata!(encoder)
+    end
+  end
 end
